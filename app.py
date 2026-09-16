@@ -2,7 +2,7 @@ import time
 import os
 import redis
 
-#r = redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"), port=6379, decode_responses=True)
+r = redis.Redis(host=os.environ.get("REDIS_HOST", "localhost"), port=6379, decode_responses=True)
 
 while True:
     count = r.incr("tick_counter")
