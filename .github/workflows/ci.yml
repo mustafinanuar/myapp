@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Syntax check
+        run: python -m py_compile app.py
+
+      - name: Build Docker image
+        run: docker build -t myapp:${{ github.sha }} .
+
+      - name: Smoke test via docker compose
+        run: |
+          docker compose up -d
+          sleep 8
+          docker compose logs app
+          docker compose logs app | grep -q "tick #" && echo "OK: приложение реально тикает" || (echo "FAIL: не нашли ожидаемый вывод в логах" && exit 1)
+          docker compose down
