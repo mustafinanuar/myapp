@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    container_name: myapp
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
